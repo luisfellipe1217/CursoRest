@@ -2,7 +2,9 @@ package br.com.luisfellipe.rest;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Assert;
@@ -121,5 +123,20 @@ public class UserJsonTest {
 			.body("name.findAll{it.startsWith('Maria')}.collect{it.toUpperCase()}", hasItem("MARIA JOAQUINA"))
 			.body("name.findAll{it.startsWith('Maria')}.collect{it.toUpperCase()}", allOf(hasItem("MARIA JOAQUINA"),  hasSize(1)))
 		;		
+	}
+	
+	@Test
+	public void devoUnirJsonPathcomJava() {
+		ArrayList <String> names =
+		given()
+		.when()
+			.get("http://restapi.wcaquino.me/users")
+		.then()
+			.statusCode(200)
+			.extract().path("name.findAll{it.startsWith('Maria')}")
+		;		
+		assertEquals(1, names.size());
+		assertTrue(names.get(0).equalsIgnoreCase("Maria joaquina"));
+		assertEquals(names.get(0).toUpperCase(), "maria joaquina".toUpperCase());
 	}
 }
