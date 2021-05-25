@@ -93,12 +93,33 @@ public class UserJsonTest {
 		.when()
 			.get("http://restapi.wcaquino.me/users")
 		.then()
-		.statusCode(200)
-		.body("$", hasSize(3))
-		.body("name", hasItems("João da Silva","Maria Joaquina","Ana Júlia"))
-		.body("age[1]", is(25))
-		.body("filhos.name", hasItem(Arrays.asList("Zezinho", "Luizinho")))
-		.body("salary", contains(1234.5678f, 2500, null))
+			.statusCode(200)
+			.body("$", hasSize(3))
+			.body("name", hasItems("João da Silva","Maria Joaquina","Ana Júlia"))
+			.body("age[1]", is(25))
+			.body("filhos.name", hasItem(Arrays.asList("Zezinho", "Luizinho")))
+			.body("salary", contains(1234.5678f, 2500, null))
 		;
 	}	
+	
+	@Test
+	public void devoFazerVerificacoesAvancadas() {
+		given()
+		.when()
+			.get("http://restapi.wcaquino.me/users")
+		.then()
+			.statusCode(200)
+			.body("$", hasSize(3))
+			.body("age.findAll{it <=25}.size()", is(2))
+			.body("age.findAll{it <=25 && it  > 20}.size()", is(1))
+			.body("findAll{it.age <=25 && it.age >20}.name", hasItem("Maria Joaquina"))
+			.body("findAll{it.age <=25}[0].name", is("Maria Joaquina"))
+			.body("findAll{it.age <=25}[-1].name", is("Ana Júlia"))
+			.body("find{it.age <=25}.name", is("Maria Joaquina"))
+			.body("findAll{it.name.contains('n')}.name", hasItems("Maria Joaquina", "Ana Júlia"))
+			.body("name.collect{it.toUpperCase()}", hasItem("MARIA JOAQUINA"))
+			.body("name.findAll{it.startsWith('Maria')}.collect{it.toUpperCase()}", hasItem("MARIA JOAQUINA"))
+			.body("name.findAll{it.startsWith('Maria')}.collect{it.toUpperCase()}", allOf(hasItem("MARIA JOAQUINA"),  hasSize(1)))
+		;		
+	}
 }
