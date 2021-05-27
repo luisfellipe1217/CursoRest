@@ -6,29 +6,39 @@ import static org.hamcrest.Matchers.*;
 import java.util.ArrayList;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import io.restassured.RestAssured;
 import io.restassured.internal.path.xml.NodeImpl;
 
 
 
-
 public class xmlTest {
+	
+	@BeforeClass
+	public static void setup() {
+		RestAssured.baseURI = "http://restapi.wcaquino.me";
+		RestAssured.port  = 80;
+		//RestAssured.basePath = "/v2";		
+		
+	}
 
 	@Test
 	public void devoTrabalharComXML() {
+
 				given()
 				.when()
-					.get("http://restapi.wcaquino.me/usersXML/3")
+					.get("/users")
 				.then()
 					.statusCode(200)
-					.rootPath("user")
-					.body("name", is("Ana Julia"))
-					.body("@id", is("3"))				
-					.body("filhos.name[0]", is("Zezinho"))
-					.body("filhos.name[1]",is("Luizinho"))
-					.body("filhos.name", hasItem("Luizinho"))
-					.body("filhos.name", hasItems("Luizinho", "Zezinho"))
+//					.rootPath("user")
+//					.body("name", is("Ana Julia"))
+//					.body("@id", is("3"))				
+//					.body("filhos.name[0]", is("Zezinho"))
+//					.body("filhos.name[1]",is("Luizinho"))
+//					.body("filhos.name", hasItem("Luizinho"))
+//					.body("filhos.name", hasItems("Luizinho", "Zezinho"))
 		;
 	}
 	
@@ -36,7 +46,7 @@ public class xmlTest {
 	public void devoFazerPesquisasAvançadasXML() {
 		given()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML/")
+			.get("/usersXML/")
 		.then()
 			.statusCode(200)
 			.body("users.user.size()", is(3))
@@ -54,7 +64,7 @@ public class xmlTest {
 	public void devoFazerPesquisasAvancadasComXMLeJava() {
 		ArrayList<NodeImpl> nomes = given()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML/")
+			.get("/usersXML/")
 		.then()
 			.statusCode(200)
 			.extract().path("users.user.name.findAll{it.toString().contains('n')}")
@@ -68,7 +78,7 @@ public class xmlTest {
 	public void devoFazerPesquisasAvancadasComXPath() {
 		given()
 		.when()
-			.get("http://restapi.wcaquino.me/usersXML/")
+			.get("/usersXML/")
 		.then()
 			.statusCode(200)			
 			.body(hasXPath("count(/users/user)", is("3")))
