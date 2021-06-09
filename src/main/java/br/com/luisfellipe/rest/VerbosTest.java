@@ -1,11 +1,15 @@
 package br.com.luisfellipe.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.restassured.http.ContentType;
@@ -53,6 +57,50 @@ public class VerbosTest {
 		;		
 	}
 	
+	@Test
+	public void deveSalvarUsuarioObjeto() {
+		
+		User user = new User("Usuario via Objeto", 20, 1255.50);
+
+		given()
+			.log().all()
+			.contentType("application/json")
+			.body(user)
+		.when()
+			.post("http://restapi.wcaquino.me/users")
+		.then()
+			.log().all()
+			.statusCode(201)
+			.body("id", is(notNullValue()))
+			.body("name", is("Usuario via Objeto"))
+			.body("age", is(20))
+		;		
+	}
+	
+	@Test
+	public void deveDesSerealizarObjeto() {
+		
+		User user = new User("Usuario Descerealizado", 20, 1255.50);
+
+		User usuarioInserido = given()
+			.log().all()
+			.contentType("application/json")
+			.body(user)
+		.when()
+			.post("http://restapi.wcaquino.me/users")
+		.then()
+			.log().all()
+			.statusCode(201)	
+			.extract().body().as(User.class);		
+		
+		System.out.println(usuarioInserido);
+		Assert.assertThat(usuarioInserido.getId(), Matchers.is(notNullValue()));
+		Assert.assertEquals(usuarioInserido.getName(), "Usuario Descerealizado");
+		Assert.assertThat(usuarioInserido.getAge(), is(20));
+		
+		
+		
+	}
 	@Test
 	public void naoDeveSlavarUsuarioSemNome() {
 		given()
