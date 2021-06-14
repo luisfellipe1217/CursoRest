@@ -55,6 +55,7 @@ public class FileTest {
 			;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void devoBaixarUmArquivo() throws IOException {
 		byte[] image = given()

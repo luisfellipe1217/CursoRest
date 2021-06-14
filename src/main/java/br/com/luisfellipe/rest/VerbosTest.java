@@ -77,6 +77,7 @@ public class VerbosTest {
 		;		
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void deveDesSerealizarObjeto() {
 		

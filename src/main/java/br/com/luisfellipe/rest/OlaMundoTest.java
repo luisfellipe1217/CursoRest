@@ -58,6 +58,7 @@ public class OlaMundoTest {
 				.statusCode(200);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void devoConhecerOsMatchersComHamcrest() {
 		Assert.assertThat("Maria", Matchers.is("Maria"));
